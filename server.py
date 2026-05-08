@@ -4,20 +4,11 @@ from fastapi.staticfiles import StaticFiles
 import sqlite3
 from datetime import datetime
 import os
-import threading
-import serial
-import time
 
 app = FastAPI()
 
 DB_PATH = "rideu.db"
 FIXED_PIN = "1234"
-
-# CAMBIA ESTE PUERTO SEGUN TU COMPUTADORA
-# Windows ejemplo: COM3, COM4, COM5
-# Mac ejemplo: /dev/tty.usbmodem101
-SERIAL_PORT = "COM5"
-SERIAL_BAUD = 115200
 
 gps_data = {
     "scooter": "SC01",
@@ -25,7 +16,7 @@ gps_data = {
     "lon": -90.5069,
     "speed": 0,
     "last_update": "Sin datos reales todavía",
-    "serial_status": "Desconectado"
+    "serial_status": "Esperando bridge GPS"
 }
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -51,53 +42,12 @@ def init_db():
     conn.close()
 
 
-def serial_worker():
-    global gps_data
-
-    while True:
-        try:
-            print(f"[SERIAL] Intentando conectar a {SERIAL_PORT}...")
-            ser = serial.Serial(SERIAL_PORT, SERIAL_BAUD, timeout=1)
-
-            gps_data["serial_status"] = f"Conectado a {SERIAL_PORT}"
-            print(f"[SERIAL] Conectado a {SERIAL_PORT}")
-
-            while True:
-                line = ser.readline().decode(errors="ignore").strip()
-
-                if not line:
-                    continue
-
-                print("[SERIAL]", line)
-
-                # Formato esperado:
-                # SC01,GPS,14.634915,-90.506882,12
-                parts = line.split(",")
-
-                if len(parts) >= 5:
-                    scooter = parts[0].strip()
-                    tipo = parts[1].strip()
-
-                    if tipo == "GPS":
-                        lat = float(parts[2])
-                        lon = float(parts[3])
-                        speed = float(parts[4])
-
-                        gps_data["scooter"] = scooter
-                        gps_data["lat"] = lat
-                        gps_data["lon"] = lon
-                        gps_data["speed"] = speed
-                        gps_data["last_update"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                        gps_data["serial_status"] = f"Conectado a {SERIAL_PORT}"
-
-        except Exception as e:
-            gps_data["serial_status"] = f"Error serial: {e}"
-            print("[SERIAL ERROR]", e)
-            time.sleep(3)
-
-
 init_db()
-threading.Thread(target=serial_worker, daemon=True).start()
+
+
+@app.head("/")
+def head_home():
+    return
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -249,10 +199,15 @@ def home():
             justify-content: space-between;
             border-bottom: 1px solid #e5e7eb;
             padding: 7px 0;
+            gap: 10px;
         }
 
         .gps-row:last-child {
             border-bottom: none;
+        }
+
+        .gps-row b {
+            text-align: right;
         }
 
         table {
@@ -278,6 +233,10 @@ def home():
 
             header {
                 font-size: 21px;
+            }
+
+            table {
+                font-size: 12px;
             }
         }
     </style>
@@ -348,7 +307,7 @@ def home():
                     <div class="gps-row"><span>Longitud</span><b id="gpsLon">---</b></div>
                     <div class="gps-row"><span>Velocidad</span><b id="gpsSpeed">---</b></div>
                     <div class="gps-row"><span>Última actualización</span><b id="gpsUpdate">---</b></div>
-                    <div class="gps-row"><span>Serial</span><b id="gpsSerial">---</b></div>
+                    <div class="gps-row"><span>Estado GPS</span><b id="gpsSerial">---</b></div>
                 </div>
             </div>
 
@@ -396,8 +355,8 @@ def home():
                 const res = await fetch("/gps");
                 const data = await res.json();
 
-                const lat = data.lat;
-                const lon = data.lon;
+                const lat = Number(data.lat);
+                const lon = Number(data.lon);
 
                 marker.setLatLng([lat, lon]);
                 map.panTo([lat, lon]);
@@ -480,6 +439,29 @@ def gps():
     return gps_data
 
 
+@app.post("/update-gps")
+async def update_gps(request: Request):
+    global gps_data
+
+    try:
+        data = await request.json()
+
+        gps_data["scooter"] = data.get("scooter", "SC01")
+        gps_data["lat"] = float(data.get("lat", 0))
+        gps_data["lon"] = float(data.get("lon", 0))
+        gps_data["speed"] = float(data.get("speed", 0))
+        gps_data["last_update"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        gps_data["serial_status"] = "GPS ONLINE"
+
+        return {"ok": True, "gps": gps_data}
+
+    except Exception as e:
+        return JSONResponse({
+            "ok": False,
+            "error": str(e)
+        }, status_code=400)
+
+
 @app.post("/generate-pin")
 async def generate_pin(request: Request):
     data = await request.json()
@@ -511,9 +493,6 @@ async def generate_pin(request: Request):
 
     return {"ok": True, "pin": pin}
 
-@app.head("/")
-def head_home():
-    return
 
 @app.get("/students")
 def students():
@@ -547,4 +526,3 @@ if __name__ == "__main__":
 
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run("server:app", host="0.0.0.0", port=port)
-
