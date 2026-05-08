@@ -56,380 +56,340 @@ def home():
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>RIDE U</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>RIDE U</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f3f4f6;
-            color: #111827;
-        }
+<style>
 
-        header {
-            background: #111827;
-            color: white;
-            padding: 16px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-        }
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f3f4f6;
+}
 
-        .container {
-            max-width: 1200px;
-            margin: auto;
-            padding: 20px;
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            gap: 20px;
-        }
+header{
+    background:#111827;
+    color:white;
+    padding:16px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+}
 
-        .card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+    display:grid;
+    grid-template-columns:380px 1fr;
+    gap:20px;
+}
 
-        .logo {
-            width: 190px;
-            display: block;
-            margin: 0 auto 18px auto;
-            border-radius: 10px;
-        }
+.card{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 5px 18px rgba(0,0,0,0.08);
+    margin-bottom:20px;
+}
 
-        .qr {
-            width: 210px;
-            display: block;
-            margin: 10px auto;
-            border-radius: 10px;
-            border: 1px solid #e5e7eb;
-        }
+.logo{
+    width:190px;
+    display:block;
+    margin:auto;
+}
 
-        h2 {
-            margin-top: 0;
-        }
+.qr{
+    width:220px;
+    display:block;
+    margin:auto;
+}
 
-        .conditions {
-            background: #fff7ed;
-            border-left: 5px solid #f97316;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
+label{
+    display:block;
+    margin-top:12px;
+    font-weight:bold;
+}
 
-        .conditions ul {
-            padding-left: 18px;
-            margin-bottom: 0;
-        }
+input,select{
+    width:100%;
+    padding:12px;
+    margin-top:6px;
+    border-radius:10px;
+    border:1px solid #d1d5db;
+    box-sizing:border-box;
+}
 
-        label {
-            display: block;
-            margin-top: 12px;
-            font-size: 14px;
-            font-weight: bold;
-        }
+button{
+    width:100%;
+    margin-top:18px;
+    padding:15px;
+    background:#16a34a;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:bold;
+}
 
-        input, select {
-            width: 100%;
-            padding: 12px;
-            margin-top: 6px;
-            box-sizing: border-box;
-            border: 1px solid #d1d5db;
-            border-radius: 10px;
-            font-size: 16px;
-        }
+.pin-box{
+    margin-top:18px;
+    background:#dcfce7;
+    padding:20px;
+    border-radius:14px;
+    text-align:center;
+    font-size:32px;
+    font-weight:bold;
+}
 
-        button {
-            width: 100%;
-            margin-top: 18px;
-            padding: 15px;
-            background: #16a34a;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+#map{
+    height:430px;
+    border-radius:14px;
+}
 
-        button:hover {
-            background: #15803d;
-        }
+.gps-info{
+    margin-top:10px;
+    background:#f9fafb;
+    padding:12px;
+    border-radius:12px;
+}
 
-        .pin-box {
-            margin-top: 18px;
-            background: #dcfce7;
-            color: #065f46;
-            text-align: center;
-            border-radius: 14px;
-            padding: 20px;
-            font-size: 32px;
-            font-weight: bold;
-        }
+.gps-row{
+    display:flex;
+    justify-content:space-between;
+    padding:7px 0;
+    border-bottom:1px solid #e5e7eb;
+}
 
-        .pin-box small {
-            display: block;
-            font-size: 14px;
-            margin-top: 8px;
-        }
+table{
+    width:100%;
+    border-collapse:collapse;
+}
 
-        #map {
-            height: 430px;
-            border-radius: 14px;
-            margin-top: 10px;
-        }
+th,td{
+    border-bottom:1px solid #e5e7eb;
+    padding:8px;
+    text-align:left;
+}
 
-        .gps-info {
-            background: #f9fafb;
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 12px;
-            font-size: 14px;
-        }
+@media(max-width:850px){
+    .container{
+        grid-template-columns:1fr;
+    }
+}
 
-        .gps-row {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 7px 0;
-            gap: 10px;
-        }
-
-        .gps-row:last-child {
-            border-bottom: none;
-        }
-
-        .gps-row b {
-            text-align: right;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        th, td {
-            border-bottom: 1px solid #e5e7eb;
-            padding: 9px;
-            text-align: left;
-        }
-
-        th {
-            background: #f9fafb;
-        }
-
-        @media (max-width: 850px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-
-            header {
-                font-size: 21px;
-            }
-
-            table {
-                font-size: 12px;
-            }
-        }
-    </style>
+</style>
 </head>
 
 <body>
-    <header>RIDE U</header>
 
-    <div class="container">
+<header>RIDE U</header>
 
-        <div>
-            <div class="card">
-                <img src="/static/logo.jpeg" class="logo">
+<div class="container">
 
-                <h2>Generar acceso</h2>
+<div>
 
-                <div class="conditions">
-                    <b>Condiciones de uso:</b>
-                    <ul>
-                        <li>Solo una persona a la vez.</li>
-                        <li>Uso responsable dentro del área permitida.</li>
-                        <li>Prioridad a peatones.</li>
-                        <li>No usar bajo lluvia o condiciones inseguras.</li>
-                        <li>El estudiante es responsable durante el uso del prototipo.</li>
-                    </ul>
-                </div>
+<div class="card">
 
-                <label>Nombre del estudiante</label>
-                <input id="studentName" placeholder="Ejemplo: Juan Pérez">
+<img src="/static/logo.jpeg" class="logo">
 
-                <label>No. de carné</label>
-                <input id="studentCarnet" placeholder="Ejemplo: 202412345">
+<h2>Generar acceso</h2>
 
-                <label>Plan</label>
-                <select id="plan">
-                    <option value="Q3">Q3</option>
-¿
-                </select>
+<label>Nombre estudiante</label>
+<input id="studentName">
 
-                <label>Código / comprobante Zigi</label>
-                <input id="zigiCode" placeholder="Ejemplo: ZIGI-123456">
+<label>No. Carné</label>
+<input id="studentCarnet">
 
-                <button onclick="generatePin()">Ya pagué con Zigi. Generar PIN</button>
+<label>Plan</label>
+<select id="plan">
+<option value="Q5">Q5</option>
+<option value="Q10">Q10</option>
+<option value="Q15">Q15</option>
+<option value="Q20">Q20</option>
+</select>
 
-                <div class="pin-box">
-                    PIN: <span id="pinText">----</span>
-                    <small>Presiona # para ENTER en el teclado del scooter</small>
-                </div>
-            </div>
+<label>Comprobante Zigi</label>
+<input id="zigiCode">
 
-            <div class="card">
-                <h2>QR de acceso</h2>
-                <p>Escanea este QR para realizar el pago.</p>
-                <img src="/static/qr.jpeg" class="qr">
-            </div>
-        </div>
+<button onclick="generatePin()">
+Ya pagué con Zigi. Generar PIN
+</button>
 
-        <div>
-            <div class="card">
-                <h2>Mapa GPS del scooter</h2>
-                <div id="map"></div>
+<div class="pin-box">
+PIN: <span id="pinText">----</span>
+</div>
 
-                <div class="gps-info">
-                    <div class="gps-row"><span>Scooter</span><b id="gpsScooter">SC01</b></div>
-                    <div class="gps-row"><span>Latitud</span><b id="gpsLat">---</b></div>
-                    <div class="gps-row"><span>Longitud</span><b id="gpsLon">---</b></div>
-                    <div class="gps-row"><span>Velocidad</span><b id="gpsSpeed">---</b></div>
-                    <div class="gps-row"><span>Última actualización</span><b id="gpsUpdate">---</b></div>
-                    <div class="gps-row"><span>Estado GPS</span><b id="gpsSerial">---</b></div>
-                </div>
-            </div>
+</div>
 
-            <div class="card">
-                <h2>Estudiantes registrados</h2>
+<div class="card">
+<h2>QR</h2>
+<img src="/static/qr.jpeg" class="qr">
+</div>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Carné</th>
-                            <th>Plan</th>
-                            <th>Zigi</th>
-                            <th>PIN</th>
-                            <th>Fecha</th>
-                        </tr>
-                    </thead>
-                    <tbody id="studentsTable"></tbody>
-                </table>
-            </div>
-        </div>
+</div>
 
-    </div>
+<div>
 
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<div class="card">
 
-    <script>
-        const defaultLat = 14.6349;
-        const defaultLon = -90.5069;
+<h2>Mapa GPS</h2>
 
-        const map = L.map('map').setView([defaultLat, defaultLon], 16);
+<div id="map"></div>
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: 'OpenStreetMap'
-        }).addTo(map);
+<div class="gps-info">
 
-        const marker = L.marker([defaultLat, defaultLon])
-            .addTo(map)
-            .bindPopup("Scooter RIDE U - BASE1")
-            .openPopup();
+<div class="gps-row">
+<span>Scooter</span>
+<b id="gpsScooter">SC01</b>
+</div>
 
-        async function updateGPS() {
-            try {
-                const res = await fetch("/gps");
-                const data = await res.json();
+<div class="gps-row">
+<span>Latitud</span>
+<b id="gpsLat">---</b>
+</div>
 
-                const lat = Number(data.lat);
-                const lon = Number(data.lon);
+<div class="gps-row">
+<span>Longitud</span>
+<b id="gpsLon">---</b>
+</div>
 
-                marker.setLatLng([lat, lon]);
-                map.panTo([lat, lon]);
+<div class="gps-row">
+<span>Velocidad</span>
+<b id="gpsSpeed">---</b>
+</div>
 
-                document.getElementById("gpsScooter").innerText = data.scooter;
-                document.getElementById("gpsLat").innerText = lat.toFixed(6);
-                document.getElementById("gpsLon").innerText = lon.toFixed(6);
-                document.getElementById("gpsSpeed").innerText = data.speed + " km/h";
-                document.getElementById("gpsUpdate").innerText = data.last_update;
-                document.getElementById("gpsSerial").innerText = data.serial_status;
+<div class="gps-row">
+<span>Estado</span>
+<b id="gpsStatus">Esperando...</b>
+</div>
 
-            } catch(e) {
-                console.log("GPS error:", e);
-            }
-        }
+</div>
 
-        async function generatePin() {
-            const payload = {
-                name: document.getElementById("studentName").value.trim(),
-                carnet: document.getElementById("studentCarnet").value.trim(),
-                plan: document.getElementById("plan").value,
-                zigi_code: document.getElementById("zigiCode").value.trim()
-            };
+</div>
 
-            if (!payload.name || !payload.carnet || !payload.zigi_code) {
-                alert("Completa nombre, carné y comprobante Zigi.");
-                return;
-            }
+<div class="card">
 
-            const res = await fetch("/generate-pin", {
-                method: "POST",
-                headers: {"Content-Type":"application/json"},
-                body: JSON.stringify(payload)
-            });
+<h2>Estudiantes registrados</h2>
 
-            const data = await res.json();
+<table>
+<thead>
+<tr>
+<th>Nombre</th>
+<th>Carné</th>
+<th>Plan</th>
+<th>Zigi</th>
+<th>PIN</th>
+<th>Fecha</th>
+</tr>
+</thead>
 
-            if (!data.ok) {
-                alert(data.error);
-                return;
-            }
+<tbody id="studentsTable"></tbody>
 
-            document.getElementById("pinText").innerText = data.pin + "#";
+</table>
 
-            document.getElementById("studentName").value = "";
-            document.getElementById("studentCarnet").value = "";
-            document.getElementById("zigiCode").value = "";
+</div>
 
-            loadStudents();
-        }
+</div>
 
-        async function loadStudents() {
-            const res = await fetch("/students");
-            const students = await res.json();
+</div>
 
-            document.getElementById("studentsTable").innerHTML = students.map(s => `
-                <tr>
-                    <td>${s.name}</td>
-                    <td>${s.carnet}</td>
-                    <td>${s.plan}</td>
-                    <td>${s.zigi_code}</td>
-                    <td>${s.pin}#</td>
-                    <td>${s.created_at}</td>
-                </tr>
-            `).join("");
-        }
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-        updateGPS();
-        setInterval(updateGPS, 2000);
-        loadStudents();
-    </script>
+<script>
+
+const map = L.map('map').setView([14.6349,-90.5069],16);
+
+L.tileLayer(
+'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+{
+maxZoom:19
+}
+).addTo(map);
+
+const marker = L.marker([14.6349,-90.5069])
+.addTo(map);
+
+async function updateGPS(){
+
+    try{
+
+        const res = await fetch("/gps");
+        const data = await res.json();
+
+        const lat = Number(data.lat);
+        const lon = Number(data.lon);
+
+        marker.setLatLng([lat,lon]);
+
+        map.panTo([lat,lon]);
+
+        document.getElementById("gpsScooter").innerText = data.scooter;
+        document.getElementById("gpsLat").innerText = lat.toFixed(6);
+        document.getElementById("gpsLon").innerText = lon.toFixed(6);
+        document.getElementById("gpsSpeed").innerText = data.speed + " km/h";
+        document.getElementById("gpsStatus").innerText = data.serial_status;
+
+    }catch(e){
+        console.log(e);
+    }
+}
+
+async function generatePin(){
+
+    const payload = {
+        name: document.getElementById("studentName").value,
+        carnet: document.getElementById("studentCarnet").value,
+        plan: document.getElementById("plan").value,
+        zigi_code: document.getElementById("zigiCode").value
+    };
+
+    const res = await fetch("/generate-pin",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    document.getElementById("pinText").innerText = data.pin + "#";
+
+    loadStudents();
+}
+
+async function loadStudents(){
+
+    const res = await fetch("/students");
+    const data = await res.json();
+
+    document.getElementById("studentsTable").innerHTML =
+    data.map(s=>`
+        <tr>
+        <td>${s.name}</td>
+        <td>${s.carnet}</td>
+        <td>${s.plan}</td>
+        <td>${s.zigi_code}</td>
+        <td>${s.pin}#</td>
+        <td>${s.created_at}</td>
+        </tr>
+    `).join("");
+}
+
+updateGPS();
+loadStudents();
+
+setInterval(updateGPS,2000);
+
+</script>
 
 </body>
 </html>
-    """
+"""
 
 
 @app.get("/gps")
@@ -439,88 +399,90 @@ def gps():
 
 @app.post("/update-gps")
 async def update_gps(request: Request):
+
     global gps_data
 
-    try:
-        data = await request.json()
+    data = await request.json()
 
-        gps_data["scooter"] = data.get("scooter", "SC01")
-        gps_data["lat"] = float(data.get("lat", 0))
-        gps_data["lon"] = float(data.get("lon", 0))
-        gps_data["speed"] = float(data.get("speed", 0))
-        gps_data["last_update"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        gps_data["serial_status"] = "GPS ONLINE"
+    gps_data["scooter"] = data.get("scooter", "SC01")
+    gps_data["lat"] = float(data.get("lat", 0))
+    gps_data["lon"] = float(data.get("lon", 0))
+    gps_data["speed"] = float(data.get("speed", 0))
+    gps_data["last_update"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    gps_data["serial_status"] = "GPS ONLINE"
 
-        return {"ok": True, "gps": gps_data}
-
-    except Exception as e:
-        return JSONResponse({
-            "ok": False,
-            "error": str(e)
-        }, status_code=400)
+    return {"ok": True}
 
 
 @app.post("/generate-pin")
 async def generate_pin(request: Request):
+
     data = await request.json()
 
-    name = data.get("name", "").strip()
-    carnet = data.get("carnet", "").strip()
-    zigi_code = data.get("zigi_code", "").strip()
-    plan = data.get("plan", "").strip()
-
-    if not name or not carnet or not zigi_code:
-        return JSONResponse({
-            "ok": False,
-            "error": "Faltan datos"
-        })
+    name = data.get("name","")
+    carnet = data.get("carnet","")
+    zigi_code = data.get("zigi_code","")
+    plan = data.get("plan","")
 
     pin = FIXED_PIN
+
     created_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     cur.execute("""
-        INSERT INTO students (name, carnet, zigi_code, plan, pin, created_at)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (name, carnet, zigi_code, plan, pin, created_at))
+        INSERT INTO students
+        (name,carnet,zigi_code,plan,pin,created_at)
+        VALUES (?,?,?,?,?,?)
+    """,(name,carnet,zigi_code,plan,pin,created_at))
 
     conn.commit()
     conn.close()
 
-    return {"ok": True, "pin": pin}
+    return {
+        "ok": True,
+        "pin": pin
+    }
 
 
 @app.get("/students")
 def students():
+
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT name, carnet, zigi_code, plan, pin, created_at
+        SELECT name,carnet,zigi_code,plan,pin,created_at
         FROM students
         ORDER BY id DESC
     """)
 
     rows = cur.fetchall()
+
     conn.close()
 
     return [
         {
-            "name": r[0],
-            "carnet": r[1],
-            "zigi_code": r[2],
-            "plan": r[3],
-            "pin": r[4],
-            "created_at": r[5]
+            "name":r[0],
+            "carnet":r[1],
+            "zigi_code":r[2],
+            "plan":r[3],
+            "pin":r[4],
+            "created_at":r[5]
         }
         for r in rows
     ]
 
 
 if __name__ == "__main__":
+
     import uvicorn
 
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("server:app", host="0.0.0.0", port=port)
+    port = int(os.environ.get("PORT",8000))
+
+    uvicorn.run(
+        "server:app",
+        host="0.0.0.0",
+        port=port
+    )
