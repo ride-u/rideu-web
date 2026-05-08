@@ -272,10 +272,8 @@ def home():
 
                 <label>Plan</label>
                 <select id="plan">
-                    <option value="Q5">Q5</option>
-                    <option value="Q10">Q10</option>
-                    <option value="Q15">Q15</option>
-                    <option value="Q20">Q20</option>
+                    <option value="Q3">Q3</option>
+¿
                 </select>
 
                 <label>Código / comprobante Zigi</label>
@@ -291,7 +289,7 @@ def home():
 
             <div class="card">
                 <h2>QR de acceso</h2>
-                <p>Escanea este QR para abrir la página desde el teléfono.</p>
+                <p>Escanea este QR para realizar el pago.</p>
                 <img src="/static/qr.jpeg" class="qr">
             </div>
         </div>

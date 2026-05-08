@@ -2,7 +2,7 @@ import serial
 import requests
 import time
 
-SERIAL_PORT = "COM5"
+SERIAL_PORT = "/dev/cu.usbmodem101"
 BAUDRATE = 115200
 
 SERVER_URL = "https://rideu-web-1.onrender.com/update-gps"
